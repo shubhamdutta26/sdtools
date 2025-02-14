@@ -18,7 +18,7 @@
 #' create_plate()
 #' }
 create_plate <- function(plate_type = 96,
-                         n_plates = 21,
+                         n_plates = 22,
                          plate_names = NULL,
                          file_type = c("xlsx", "csv"),
                          file_name = NULL) {
