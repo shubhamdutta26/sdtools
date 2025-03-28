@@ -36,7 +36,7 @@ create_folders <- function(
   folder_names <- c(
     "01-sequences",
     "02-raw-data",
-    "03-processed-data",
+    "03-data",
     "04-scripts",
     "05-reports",
     "06-manuscripts",
