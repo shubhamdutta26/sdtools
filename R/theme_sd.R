@@ -10,6 +10,8 @@
 #' @param title_family Character. Font family for plot titles. Default is "Roboto Slab".
 #' @param axis_line Character. Where to draw axis lines. Options: "xy", "x", "y", "none". Default is "xy".
 #' @param axis_tick Character. Where to draw axis ticks. Options: "xy", "x", "y", "none". Default is "xy".
+#' @param major_tick_length Numeric. Major tick length in mm. Minor ticks length is half. Default is 3 mm.
+#' To display ticks inside the plot use a negative number.
 #' @param grid Character. Where to draw grid lines. Options: "xy", "x", "y", "none". Default is "xy".
 #' @param base_line_size Numeric. Line size for base elements. Default is `base_size / 22`.
 #' @param base_rect_size Numeric. Rectangle size for base elements. Default is `base_size / 22`.
@@ -35,6 +37,17 @@
 #'   geom_point() +
 #'   theme_sd(grid = "y", axis_tick = "y", axis_line = "y")
 #' }
+#' 
+#' # To display minor ticks use guides()
+#' ggplot(mpg, aes(displ, hwy)) +
+#'   geom_point() +
+#'   guides(
+#'     x = guide_axis(minor.ticks = TRUE),
+#'     y = guide_axis(minor.ticks = TRUE)
+#'   ) + 
+#'   scale_y_continuous(expand = expansion(0), minor_breaks = scales::breaks_width(1)) +
+#'   scale_x_continuous(expand = expansion(0), minor_breaks = scales::breaks_width(0.2)) +
+#'   theme_sd(grid = "xy", major_tick_length = -3)
 #'
 #' @importFrom systemfonts system_fonts register_variant
 #' @importFrom stringr str_detect
@@ -46,6 +59,7 @@ theme_sd <- function(base_size = 11,
                      title_family = "Roboto Slab",
                      axis_line = "xy",
                      axis_tick = "xy",
+                     major_tick_length = 3,
                      grid = "xy",
                      base_line_size = base_size / 22,
                      base_rect_size = base_size / 22) {
@@ -53,14 +67,14 @@ theme_sd <- function(base_size = 11,
   axis_line <- rlang::arg_match(axis_line, c("xy", "x", "y", "none"))
   axis_tick <- rlang::arg_match(axis_tick, c("xy", "x", "y", "none"))
   grid <- rlang::arg_match(grid, c("xy", "x", "y", "none"))
-
+  
   # Font handling
   available_fonts <- systemfonts::system_fonts()$family
   check_font <- function(font) if (font %in% available_fonts) font else ""
-
+  
   final_base_family <- check_font(base_family)
   final_title_family <- check_font(title_family)
-
+  
   # Inform user about missing fonts
   missing_fonts <- setdiff(c(base_family, title_family), available_fonts)
   if (length(missing_fonts) > 0) {
@@ -72,7 +86,11 @@ theme_sd <- function(base_size = 11,
     )
     rlang::inform(msg)
   }
-
+  
+  # Reusable styles
+  grid_line <- ggplot2::element_line(color = shubham_cols[["dark_gray"]], linetype = "longdash")
+  tick_length_unit <- ggplot2::unit(major_tick_length, "mm")
+  
   # Base theme
   base_theme <- ggplot2::theme_minimal(
     base_size = base_size,
@@ -83,7 +101,7 @@ theme_sd <- function(base_size = 11,
     plot.background = ggplot2::element_rect(fill = "white", color = NA),
     panel.background = ggplot2::element_rect(fill = "white", color = NA),
     panel.grid.major = ggplot2::element_line(color = shubham_cols[["light_gray"]], linewidth = 0.2),
-    panel.grid.minor = ggplot2::element_line(color = shubham_cols[["light_gray"]], linewidth = 0.1),
+    panel.grid.minor = ggplot2::element_blank(),
     text = ggplot2::element_text(family = final_base_family, color = shubham_cols[["charcoal"]]),
     plot.title = ggplot2::element_text(
       family = final_title_family, size = base_size * 1.6, face = "bold",
@@ -96,16 +114,17 @@ theme_sd <- function(base_size = 11,
     ),
     axis.title = ggplot2::element_text(size = base_size * 1.1, color = shubham_cols[["navy"]]),
     axis.text = ggplot2::element_text(size = base_size * 0.9, color = shubham_cols[["charcoal"]]),
+    axis.minor.ticks.length = ggplot2::rel(0.5),
     legend.title = ggplot2::element_text(size = base_size * 1.1, color = shubham_cols[["navy"]]),
     legend.text = ggplot2::element_text(size = base_size * 0.9),
     legend.background = ggplot2::element_rect(fill = "white", color = NA),
     strip.text = ggplot2::element_text(size = base_size * 1.1, color = shubham_cols[["navy"]], face = "bold"),
     plot.margin = ggplot2::margin(rep(base_size, 4))
   )
-
+  
   # Utility function to apply settings
   apply_theme <- function(settings, key) settings[[key]] %||% ggplot2::theme()
-
+  
   # Theme customizations
   axis_line_settings <- list(
     "xy" = ggplot2::theme(axis.line = ggplot2::element_line()),
@@ -113,21 +132,38 @@ theme_sd <- function(base_size = 11,
     "y" = ggplot2::theme(axis.line.x = ggplot2::element_blank(), axis.line.y = ggplot2::element_line()),
     "none" = ggplot2::theme(axis.line = ggplot2::element_blank())
   )
-
+  
   axis_tick_settings <- list(
-    "xy" = ggplot2::theme(axis.ticks = ggplot2::element_line(color = "black"), axis.ticks.length = ggplot2::unit(3, "mm")),
-    "x" = ggplot2::theme(axis.ticks.x = ggplot2::element_line(color = "black"), axis.ticks.y = ggplot2::element_blank(), axis.ticks.length = ggplot2::unit(3, "mm")),
-    "y" = ggplot2::theme(axis.ticks.x = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_line(color = "black"), axis.ticks.length = ggplot2::unit(3, "mm")),
+    "xy" = ggplot2::theme(
+      axis.ticks = ggplot2::element_line(color = "black"),
+      axis.ticks.length = tick_length_unit
+    ),
+    "x" = ggplot2::theme(
+      axis.ticks.x = ggplot2::element_line(color = "black"),
+      axis.ticks.y = ggplot2::element_blank(),
+      axis.ticks.length = tick_length_unit
+    ),
+    "y" = ggplot2::theme(
+      axis.ticks.x = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_line(color = "black"),
+      axis.ticks.length = tick_length_unit
+    ),
     "none" = ggplot2::theme(axis.ticks = ggplot2::element_blank())
   )
-
+  
   grid_settings <- list(
-    "xy" = ggplot2::theme(panel.grid.major = ggplot2::element_line(color = shubham_cols[["dark_gray"]], linetype = "longdash")),
-    "x" = ggplot2::theme(panel.grid.major.x = ggplot2::element_line(color = shubham_cols[["dark_gray"]], linetype = "longdash"), panel.grid.major.y = ggplot2::element_blank()),
-    "y" = ggplot2::theme(panel.grid.major.x = ggplot2::element_blank(), panel.grid.major.y = ggplot2::element_line(color = shubham_cols[["dark_gray"]], linetype = "longdash")),
-    "none" = ggplot2::theme(panel.grid = ggplot2::element_blank())
+    "xy" = ggplot2::theme(panel.grid.major = grid_line),
+    "x" = ggplot2::theme(
+      panel.grid.major.x = grid_line,
+      panel.grid.major.y = ggplot2::element_blank()
+    ),
+    "y" = ggplot2::theme(
+      panel.grid.major.x = ggplot2::element_blank(),
+      panel.grid.major.y = grid_line
+    ),
+    "none" = ggplot2::theme(panel.grid.major = ggplot2::element_blank())
   )
-
+  
   return(base_theme +
            apply_theme(axis_line_settings, axis_line) +
            apply_theme(axis_tick_settings, axis_tick) +
