@@ -92,7 +92,7 @@ theme_sd <- function(base_size = 11,
   tick_length_unit <- ggplot2::unit(major_tick_length, "mm")
   
   # Base theme
-  base_theme <- ggplot2::theme_minimal(
+  base_theme <- ggplot2::theme_bw(
     base_size = base_size,
     base_family = final_base_family,
     base_line_size = base_line_size,
