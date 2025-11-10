@@ -120,7 +120,7 @@ theme_sd <- function(base_size = 11,
     legend.text = ggplot2::element_text(size = base_size * 0.9),
     legend.background = ggplot2::element_rect(fill = "white", color = NA),
     strip.text = ggplot2::element_text(size = base_size * 1.1, color = shubham_cols[["navy"]], face = "bold"),
-    plot.margin = ggplot2::margin(rep(base_size, 4))
+    plot.margin = ggplot2::margin(t = base_size, r = base_size, b = base_size, l = base_size)
   )
 
   # Utility function to apply settings
