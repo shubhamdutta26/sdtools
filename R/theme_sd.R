@@ -6,8 +6,8 @@
 #' Roboto Slab for titles by default.
 #'
 #' @param base_size Numeric. Base font size for the theme. Default is 11.
-#' @param base_family Character. Font family for base text. Default is "Roboto".
-#' @param title_family Character. Font family for plot titles. Default is "Roboto Slab".
+#' @param base_family Character. Font family for base text. Default is "Open Sans".
+#' @param title_family Character. Font family for plot titles. Default is "Open Sans".
 #' @param axis_line Character. Where to draw axis lines. Options: "xy", "x", "y", "none". Default is "none".
 #' @param axis_tick Character. Where to draw axis ticks. Options: "xy", "x", "y", "none". Default is "xy".
 #' @param major_tick_length Numeric. Major tick length in mm. Minor ticks length is half. Default is 3 mm.
@@ -56,8 +56,8 @@
 #'
 #' @export
 theme_sd <- function(base_size = 11,
-                     base_family = "Helvetica",
-                     title_family = "Helvetica",
+                     base_family = "Open Sans",
+                     title_family = "Open Sans",
                      axis_line = "none",
                      axis_tick = "xy",
                      major_tick_length = 3,
