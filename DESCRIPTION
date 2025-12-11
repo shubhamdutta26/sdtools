@@ -8,7 +8,7 @@ Description: R functions for personal use.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     dplyr,
     drc,
@@ -23,3 +23,5 @@ Imports:
     tidyplate
 URL: https://github.com/shubhamdutta26/sdtools
 BugReports: https://github.com/shubhamdutta26/sdtools/issues
+Depends: 
+    R (>= 4.1.0)

@@ -8,8 +8,9 @@ calculate_plasmid(
   plasmid_hc,
   conc_hc,
   transfection_volume,
-  plasmid_lc = NULL,
-  conc_lc = NULL
+  plasmid_lc = NA,
+  conc_lc = NA,
+  plasmid_vol = 1
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ Missing entries are interpreted as no LC for those HC plasmids.}
 
 \item{conc_lc}{(Optional) A numeric vector of light chain plasmid concentrations (in µg/µL), matching the order of \code{plasmid_lc}.
 Must be the same length as \code{plasmid_lc}.}
+
+\item{plasmid_vol}{A numeric scalar of total plasmid (µg) DNA that will be transfected per mL of culture.}
 }
 \value{
 A tibble with columns:
@@ -44,7 +47,8 @@ calculate_plasmid(
   conc_hc = c(1.444, 1.822, 1.739, 1.703),
   plasmid_lc = c("BACE1_LC"),
   conc_lc = c(1.816),
-  transfection_volume = 200
+  transfection_volume = 200,
+  plasmid_vol = 1.0
 )
 
 }

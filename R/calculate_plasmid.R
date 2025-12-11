@@ -10,6 +10,7 @@
 #' Missing entries are interpreted as no LC for those HC plasmids.
 #' @param conc_lc (Optional) A numeric vector of light chain plasmid concentrations (in µg/µL), matching the order of \code{plasmid_lc}.
 #' Must be the same length as \code{plasmid_lc}.
+#' @param plasmid_vol A numeric scalar of total plasmid (µg) DNA that will be transfected per mL of culture.
 #'
 #' @return A tibble with columns:
 #' \describe{
@@ -25,53 +26,75 @@
 #'   conc_hc = c(1.444, 1.822, 1.739, 1.703),
 #'   plasmid_lc = c("BACE1_LC"),
 #'   conc_lc = c(1.816),
-#'   transfection_volume = 200
+#'   transfection_volume = 200,
+#'   plasmid_vol = 1.0
 #' )
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr bind_rows
 #' @export
-calculate_plasmid <- function(plasmid_hc, conc_hc, transfection_volume, plasmid_lc = NULL, conc_lc = NULL) {
+calculate_plasmid <- function(
+  plasmid_hc,
+  conc_hc,
+  transfection_volume,
+  plasmid_lc = NA,
+  conc_lc = NA,
+  plasmid_vol = 1.0
+) {
   n <- length(plasmid_hc)
 
-  # Ensure plasmid_lc and conc_lc are same length or NULL
-  if (!is.null(plasmid_lc) && length(plasmid_lc) < n) {
+  # Fix 1: Handle vector warnings safely using 'all' or 'any'
+  # Check if LC is present (not just a single NA)
+  has_lc <- !all(is.na(plasmid_lc))
+
+  if (has_lc && length(plasmid_lc) < n) {
     plasmid_lc <- c(plasmid_lc, rep(NA, n - length(plasmid_lc)))
   }
-  if (!is.null(conc_lc) && length(conc_lc) < n) {
+
+  if (!all(is.na(conc_lc)) && length(conc_lc) < n) {
     conc_lc <- c(conc_lc, rep(NA, n - length(conc_lc)))
   }
 
-  # Prepare output list
+  # If LC is just a single NA, expand it to a vector of NAs for the loop
+  if (!has_lc) {
+    plasmid_lc <- rep(NA, n)
+    conc_lc <- rep(NA, n)
+  }
+
   output <- list()
 
   for (i in seq_len(n)) {
     if (!is.na(plasmid_lc[i]) && !is.na(conc_lc[i])) {
       # HC + LC pair: split volume
       vol_each <- transfection_volume / 2
-      amt_hc <- round(vol_each / conc_hc[i], 0)
-      amt_lc <- round(vol_each / conc_lc[i], 0)
+
+      # Fix 2: Removed double multiplication of plasmid_vol
+      # Calculated amount directly once here
+      amt_hc <- round(vol_each / conc_hc[i], 0) * plasmid_vol
+      amt_lc <- round(vol_each / conc_lc[i], 0) * plasmid_vol
 
       output[[length(output) + 1]] <- tibble::tibble(
         pair_id = i,
         plasmid = plasmid_hc[i],
         concentration = conc_hc[i],
-        amount = amt_hc
+        amount = amt_hc # Removed * plasmid_vol here
       )
       output[[length(output) + 1]] <- tibble::tibble(
         pair_id = i,
         plasmid = plasmid_lc[i],
         concentration = conc_lc[i],
-        amount = amt_lc
+        amount = amt_lc # Removed * plasmid_vol here
       )
     } else {
       # HC only
-      amt_hc <- round(transfection_volume / conc_hc[i], 0)
+      # Fix 2: Applied plasmid_vol here (it was missing or inconsistent in loop logic)
+      amt_hc <- round(transfection_volume / conc_hc[i], 0) * plasmid_vol
+
       output[[length(output) + 1]] <- tibble::tibble(
         pair_id = i,
         plasmid = plasmid_hc[i],
         concentration = conc_hc[i],
-        amount = amt_hc
+        amount = amt_hc # Removed * plasmid_vol here
       )
     }
   }

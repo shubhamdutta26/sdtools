@@ -6,9 +6,9 @@
 \usage{
 theme_sd(
   base_size = 11,
-  base_family = "Helvetica",
-  title_family = "Helvetica",
-  axis_line = "xy",
+  base_family = "Open Sans",
+  title_family = "Open Sans",
+  axis_line = "none",
   axis_tick = "xy",
   major_tick_length = 3,
   grid = "xy",
@@ -19,11 +19,11 @@ theme_sd(
 \arguments{
 \item{base_size}{Numeric. Base font size for the theme. Default is 11.}
 
-\item{base_family}{Character. Font family for base text. Default is "Roboto".}
+\item{base_family}{Character. Font family for base text. Default is "Open Sans".}
 
-\item{title_family}{Character. Font family for plot titles. Default is "Roboto Slab".}
+\item{title_family}{Character. Font family for plot titles. Default is "Open Sans".}
 
-\item{axis_line}{Character. Where to draw axis lines. Options: "xy", "x", "y", "none". Default is "xy".}
+\item{axis_line}{Character. Where to draw axis lines. Options: "xy", "x", "y", "none". Default is "none".}
 
 \item{axis_tick}{Character. Where to draw axis ticks. Options: "xy", "x", "y", "none". Default is "xy".}
 
