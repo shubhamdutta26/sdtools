@@ -151,14 +151,14 @@ setup_project <- function(path = ".", keep_empty_dirs = TRUE) {
       "",
       "## Project structure",
       "",
-      "- `sequences/` — DNA/RNA sequences",
-      "- `data/raw/` — original, unmodified data",
-      "- `data/processed/` — cleaned and processed data",
-      "- `R/` — R scripts and reusable functions",
-      "- `report/` — Quarto reports and presentations",
-      "- `output/figures/` — generated figures",
-      "- `output/tables/` — generated tables",
-      "- `references/` — protocols, papers, manuals, and supporting material"
+      "- `sequences/` - DNA/RNA sequences",
+      "- `data/raw/` - original, unmodified data",
+      "- `data/processed/` - cleaned and processed data",
+      "- `R/` - R scripts and reusable functions",
+      "- `report/` - Quarto reports and presentations",
+      "- `output/figures/` - generated figures",
+      "- `output/tables/` - generated tables",
+      "- `references/` - protocols, papers, manuals, and supporting material"
     )
   )
 
